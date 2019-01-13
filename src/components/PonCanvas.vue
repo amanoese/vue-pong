@@ -1,10 +1,12 @@
 <template>
-<svg width="720" height="480" fill="black">
+<svg width="720" height="480">
   <rect x="0" y="0" width="720" height="480" stroke-width="0" fill="black" />
   <line x1="365" y1="10" x2="365" y2="720" stroke-width="10" stroke="white" stroke-dasharray="20 20" />
-  <line x1="50" :y1="player1_Y1()" x2="50" :y2="player1_Y2()" stroke-width="10" stroke="white" />
-  <line x1="680" y1="50" x2="680" y2="100" stroke-width="10" stroke="white" />
-  <rect :x="ballX - ballSizeHerf" :y="ballY - ballSizeHerf" :width="ballSize" :height="ballSize" stroke-width="0" fill="white" />
+
+  <SvgBox :x="player1X" :y="mouseY" :width="racketWidth" :height="racketHeight"></SvgBox>
+  <SvgBox :x="player2X" :y="player2Y" :width="racketWidth" :height="racketHeight"></SvgBox>
+
+  <SvgBox :x="ballX" :y="ballY" :width="ballSize" :height="ballSize"></SvgBox>
   <rect x="0" y="0" width="720" height="480" stroke-width="0" fill="rgba(0,0,0,0)"
     @keyup="keyup()"
     @click="moveBall()"
@@ -13,8 +15,11 @@
 </template>
 
 <script>
+import SvgBox from './SvgBox.vue'
+
 export default {
   name: 'pon-canvas',
+  components: { SvgBox },
   mounted(){
     setInterval(this.moveBall.bind(this),25)
   },
@@ -26,21 +31,23 @@ export default {
       tableWidth: 720,
 
       mouseY : 0,
-      player1_Height : 50,
+      player1X : 50,
+      player2X : 680,
+      player2Y : 100,
 
 
-      ballX : 10,
-      ballY : 10,
+      ballX : 360,
+      ballY : 290,
       ballSize : 10,
-      accelerationX: 5,
-      accelerationY: 5
+      accelerationX: -5,
+      accelerationY: -5
     }
   },
   computed: {
-    tableHeight_1_2 (){
+    tableHeightHerf (){
       return this.tableHeight / 2
     },
-    tableWidth_1_2 (){
+    tableWidthHerf (){
       return this.tableWidth / 2
     },
     ballSizeHerf(){
@@ -48,35 +55,34 @@ export default {
     }
   },
   methods : {
-    player1_Y1() {
-      return this.mouseY - (this.racketHeight / 2)
-    },
-    player1_Y2() {
-      return this.player1_Y1() + this.racketHeight
-    },
     mousemove(event) {
       this.mouseY = event.offsetY
     },
     keyup(){
-      console.log('keyup!')
+      //console.log('keyup!')
     },
     moveBall(){
       this.ballX += this.accelerationX
       this.ballY += this.accelerationY
+      this.autoPlayer2()
       this.boundBall()
     },
+    hitBox([x,y,w,h],[x_2,y_2,w_2,h_2]){
+      return Math.abs(x - x_2) < w/2 + w_2/2
+          && Math.abs(y - y_2) < h/2 + h_2/2
+    },
     boundBall(){
-      console.log(50 < this.ballX , this.ballX < 60 , this.player1_Y1 < this.ballY , this.ballY < this.player1_Y2)
-      if(Math.abs(this.ballX - this.tableWidth_1_2) >= this.tableWidth_1_2 ||
-        (50 < this.ballX && this.ballX < 60 && this.player1_Y1() < this.ballY && this.ballY < this.player1_Y2())){
+      if( this.tableWidthHerf < Math.abs(this.ballX - this.tableWidthHerf)
+      || this.hitBox([this.player1X,this.mouseY,this.racketWidth,this.racketHeight],[this.ballX,this.ballY,this.ballSize,this.ballSize])
+      || this.hitBox([this.player2X,this.player2Y,this.racketWidth,this.racketHeight],[this.ballX,this.ballY,this.ballSize,this.ballSize])){
         this.accelerationX *= -1
       }
-      if(Math.abs(this.ballY - this.tableHeight_1_2) >= this.tableHeight_1_2){
+      if( this.tableHeightHerf < Math.abs(this.ballY - this.tableHeightHerf)){
         this.accelerationY *= -1
       }
     },
     autoPlayer2(){
-      
+      this.player2Y += (this.ballY - this.player2Y > 0 ? 4.5 : -4.5)
     }
   }
 }
