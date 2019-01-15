@@ -4,14 +4,14 @@
     <hr>
     <b-col class="mt-2">
       <b-row class="justify-content-center">
-        <b-button class="btn-social btn-github">
+        <b-button class="btn-social btn-github" @click="loginGithub">
           <font-awesome-icon :icon="['fab','github']" class="m-1"/>Sign in with Github
         </b-button>
       </b-row>
     </b-col>
     <b-col class="mt-2">
       <b-row class="justify-content-center">
-        <b-button class="btn-social btn-twitter">
+        <b-button class="btn-social btn-twitter" @click="loginTwitter">
           <font-awesome-icon :icon="['fab','twitter']" class="m-1"/>Sign in with Twitter
         </b-button>
       </b-row>
@@ -20,9 +20,26 @@
 </template>
 
 <script>
+import firebase from 'firebase'
 
 export default {
-  name: 'home'
+  name: 'home',
+  created() {
+    firebase.auth().onAuthStateChanged(user => {
+      if(!user) { return }
+      this.$router.push('game')
+    })
+  },
+  methods : {
+    loginGithub(){
+      const provider = new firebase.auth.GithubAuthProvider();
+      firebase.auth().signInWithPopup(provider)
+    },
+    loginTwitter(){
+      const provider = new firebase.auth.TwitterProvider();
+      firebase.auth().signInWithPopup(provider)
+    }
+  }
 }
 </script>
 <style>
