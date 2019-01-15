@@ -4,10 +4,12 @@ import App from './App.vue'
 
 import 'vuesax/dist/vuesax.css' //Vuesax styles
 import 'material-icons/iconfont/material-icons.css';
+import router from './router'
 
 Vue.config.productionTip = false
 Vue.use(Vuesax)
 
 new Vue({
-  render: h => h(App),
+  router,
+  render: h => h(App)
 }).$mount('#app')
