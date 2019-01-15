@@ -32,11 +32,11 @@ export default {
   },
   methods : {
     loginGithub(){
-      const provider = new firebase.auth.GithubAuthProvider();
+      const provider = new firebase.auth.GithubAuthProvider()
       firebase.auth().signInWithPopup(provider)
     },
     loginTwitter(){
-      const provider = new firebase.auth.TwitterProvider();
+      const provider = new firebase.auth.TwitterAuthProvider()
       firebase.auth().signInWithPopup(provider)
     }
   }
