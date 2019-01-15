@@ -82,7 +82,7 @@ export default {
       this.autoPlayer2()
       this.boundBall()
       this.isGaol()
-      setTimeout(this.gameInterval.bind(this),5)
+      setTimeout(()=>this.gameInterval(),25)
     },
     mousemove(event) {
       if(this.isAuto){ return }
@@ -100,8 +100,8 @@ export default {
           && Math.abs(y - y_2) < h/2 + h_2/2
     },
     boundBall(){
-      if(this.hitBox([this.player1X,this.player1Y,this.racketWidth,this.racketHeight],[this.ballX,this.ballY,this.ballSize,this.ballSize])
-      || this.hitBox([this.player2X,this.player2Y,this.racketWidth,this.racketHeight],[this.ballX,this.ballY,this.ballSize,this.ballSize])){
+      if(this.hitBox([this.player1X,this.player1Y,1,this.racketHeight],[this.ballX,this.ballY,this.ballSize,this.ballSize])
+      || this.hitBox([this.player2X,this.player2Y,1,this.racketHeight],[this.ballX,this.ballY,this.ballSize,this.ballSize])){
         this.accelerationX *= -1
       }
       if( this.tableHeightHerf < Math.abs(this.ballY - this.tableHeightHerf)){
