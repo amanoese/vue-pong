@@ -11,9 +11,10 @@
   <SvgBox :x="player2X" :y="player2Y" :width="racketWidth" :height="racketHeight"></SvgBox>
 
   <SvgBox v-if="play" :x="ballX" :y="ballY" :width="ballSize" :height="ballSize"></SvgBox>
+  <SvgBox v-if="play" :x="nBallX" :y="nBallY" :width="ballSize" :height="ballSize" color="rgba(255,255,255,0.5)"></SvgBox>
   <rect x="0" y="0" width="720" height="480" stroke-width="0" fill="rgba(0,0,0,0)"
-    @keyup="keyup()"
-    @click="gameStart()"
+    @keyup="keyup"
+    @click="gameClick"
     @mousemove="mousemove($event)" />
 </svg>
 </template>
@@ -42,9 +43,12 @@ export default {
       player1Point: 0,
       player2Point: 0,
       play : false,
+      timerId: NaN,
 
-      ballX : 360,
-      ballY : 290,
+      ballX : -1,
+      ballY : -1,
+      nBallX : -1,
+      nBallY : -1,
       ballSize : 10,
       accelerationX: -5,
       accelerationY: -5
@@ -67,12 +71,22 @@ export default {
     }
   },
   methods : {
+    gameClick(){
+      if(this.play){
+        this.gameStop()
+        return
+      }
+      this.gameStart()
+    },
     gameStart(){
-      if(this.play) { return }
       this.play = true
       this.ballY = Math.random() * this.tableHeight
       this.ballX = this.tableWidthHerf
       this.accelerationY *= (Math.random() > 0.5) ? 1 : -1
+    },
+    gameStop(){
+      this.play = false
+      //clearTimeout(this.timerId)
     },
     gameInterval(){
       if(!this.play){ return }
@@ -81,8 +95,16 @@ export default {
       if(this.isAuto) { this.autoPlayer1() }
       this.autoPlayer2()
       this.boundBall()
+      let [x,y] = this.nSeccondAfterBall(20)
+      this.nBallX = x
+      this.nBallY = y
       this.isGaol()
-      setTimeout(()=>this.gameInterval(),25)
+
+      if(!this.play && this.isAuto) {
+        this.gameStart()
+      }
+
+      this.timerId = setTimeout(()=>this.gameInterval(),25)
     },
     mousemove(event) {
       if(this.isAuto){ return }
@@ -91,6 +113,21 @@ export default {
     keyup(){
       //console.log('keyup!')
     },
+    ballPos: function ballPos(t,ballX,ballY,accelerationX,accelerationY,tableHeight){
+      return t <= 0 ? [ballX,ballY] :
+        Math.abs(ballY - tableHeight/2 ) <= tableHeight/2 ?
+          ballPos(t - 1,ballX + accelerationX,ballY + accelerationY,accelerationX,accelerationY,tableHeight) :
+          ballPos(t - 1,ballX + accelerationX,ballY - accelerationY,accelerationX,-accelerationY,tableHeight)
+    },
+    nSeccondAfterBall(n){
+      return this.ballPos(
+          n
+          ,this.ballX
+          ,this.ballY
+          ,this.accelerationX
+          ,this.accelerationY
+          ,this.tableHeight)
+   },
     moveBall(){
       this.ballX += this.accelerationX
       this.ballY += this.accelerationY
@@ -112,9 +149,6 @@ export default {
       if(this.tableWidthHerf > Math.abs(this.ballX - this.tableWidthHerf)) { return }
       this.play = false
       this.ballX > 0 ? this.player1Point += 1 : this.player2Point += 1
-      if(this.isAuto) {
-        this.gameStart()
-      }
     },
     autoPlayer1(){
       this.player1Y += (this.ballY - this.player1Y > 0 ? 4.5 : -4.5)

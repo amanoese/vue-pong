@@ -3,8 +3,7 @@
     <img alt="Vue logo" src="@/assets/logo.png">
     <br>
     <PonCanvas :isAuto="isAuto"></PonCanvas>
-    <br>
-    <vs-row vs-justify="center" vs-align="center" >
+    <vs-row vs-justify="center" vs-align="center" class="mt-2">
       <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="4">
         <label for="">Player1 Auto </label>
         <vs-switch v-model="isAuto"/>

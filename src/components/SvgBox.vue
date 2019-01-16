@@ -1,5 +1,5 @@
 <template>
-  <rect :x="rectX" :y="rectY" :width="width" :height="height" stroke-width="0" fill="white" />
+  <rect :x="rectX" :y="rectY" :width="width" :height="height" :fill="color"  stroke-width="0"/>
 </template>
 
 <script>
@@ -8,7 +8,8 @@ export default {
     x      : Number,
     y      : Number,
     width  : Number,
-    height : Number
+    height : Number,
+    color  : { type: String , default : 'white'}
   },
   computed : {
     widthHerf() {
