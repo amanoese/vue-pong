@@ -23,7 +23,7 @@
 import firebase from 'firebase'
 
 export default {
-  name: 'home',
+  name: 'login',
   created() {
     firebase.auth().onAuthStateChanged(user => {
       if(!user) { return }
