@@ -8,3 +8,8 @@ import config from '@/../config/firebase.json'
 Vue.use(VueFire)
 firebase.initializeApp(config);
 
+const db = firebase.firestore()
+const settings = { timestampsInSnapshots: true }
+db.settings(settings)
+
+export { db }
