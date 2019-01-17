@@ -1,7 +1,5 @@
 <template>
   <div id="game">
-    <img alt="Vue logo" src="@/assets/logo.png">
-    <br>
     <PonCanvas :isAuto="isAuto"></PonCanvas>
     <vs-row vs-justify="center" vs-align="center" class="mt-2">
       <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="4">
@@ -13,6 +11,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import PonCanvas from '@/components/PonCanvas.vue'
 
 export default {
@@ -21,6 +20,9 @@ export default {
     return {
       isAuto: false
     }
+  },
+  computed : {
+    ...mapState(['photoUrl'])
   },
   components: {
     PonCanvas

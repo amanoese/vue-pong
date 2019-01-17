@@ -19,7 +19,8 @@
     "vue": "^2.5.22",
     "vue-router": "^3.0.1",
     "vuefire": "^1.4.5",
-    "vuesax": "^3.8.0"
+    "vuesax": "^3.8.0",
+    "vuex": "^3.0.1"
   },
   "devDependencies": {
     "@babel/polyfill": "^7.0.0-beta.53",

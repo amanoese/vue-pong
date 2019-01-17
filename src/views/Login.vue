@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import firebase from 'firebase'
 
 export default {
@@ -27,7 +28,8 @@ export default {
   created() {
     firebase.auth().onAuthStateChanged(user => {
       if(!user) { return }
-      this.$router.push('game')
+      this.loginUser(user)
+      this.$router.push('home')
     })
   },
   methods : {
@@ -38,7 +40,8 @@ export default {
     loginTwitter(){
       const provider = new firebase.auth.TwitterAuthProvider()
       firebase.auth().signInWithPopup(provider)
-    }
+    },
+    ...mapActions(['loginUser'])
   }
 }
 </script>
