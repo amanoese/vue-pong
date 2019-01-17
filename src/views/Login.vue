@@ -20,17 +20,17 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapState,mapActions } from 'vuex'
 import firebase from 'firebase'
 
 export default {
   name: 'login',
-  created() {
-    firebase.auth().onAuthStateChanged(user => {
+  computed : mapState(['user']),
+  watch:{
+    user(user) {
       if(!user) { return }
-      this.loginUser(user)
       this.$router.push('home')
-    })
+    }
   },
   methods : {
     loginGithub(){

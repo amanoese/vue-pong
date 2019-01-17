@@ -19,20 +19,19 @@ export default new Vuex.Store({
       store.name = name
       store.photoURL = user.photoURL
     },
-    addMeToPlayUser(store){
-      let {name,photoURL,uid} = store.user
-      store.playUser.push({name,photoURL,uid})
-    },
     clearUser(store){
       store.user = null
     },
     ...firebaseMutations
   },
   actions: {
-    loginUser({ commit, dispatch },user){
+    loginUser({ state, commit, dispatch },user){
+      let {name="",photoURL="",uid=""} = user
+
       commit('saveUser',user)
-      dispatch('setAllUsersRef',db.collection('playUser'))
-      commit('addMeToPlayUser')
+      let collection = db.collection('playUser')
+      dispatch('setAllUsersRef',collection)
+      collection.add({name,photoURL,uid})
     },
     logoutUser({ commit }){
       commit('clearUser')
