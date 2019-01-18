@@ -14,8 +14,7 @@
   <SvgBox v-if="play" :x="nBallX" :y="nBallY" :width="ballSize" :height="ballSize" color="rgba(255,255,255,0.5)"></SvgBox>
   <rect x="0" y="0" width="720" height="480" stroke-width="0" fill="rgba(0,0,0,0)"
     @keyup="keyup"
-    @click="gameClick"
-     />
+    @click="gameClick" />
 </svg>
 </template>
 
@@ -26,8 +25,6 @@ export default {
   name: 'pon-canvas',
   components: { SvgBox },
   props: {
-    isAuto: { type: Boolean, default : false },
-
     player1Y : { type:Number, default : 100 },
     player2Y : { type:Number, default : 100 }
   },
@@ -95,16 +92,11 @@ export default {
       if(!this.play){ return }
 
       this.moveBall()
-      if(this.isAuto) { this.autoPlayer1() }
       this.boundBall()
       let [x,y] = this.nSeccondAfterBall(20)
       this.nBallX = x
       this.nBallY = y
       this.isGaol()
-
-      if(!this.play && this.isAuto) {
-        this.gameStart()
-      }
 
       this.timerId = setTimeout(()=>this.gameInterval(),25)
     },

@@ -31,6 +31,7 @@ export default {
     },
     moveball(x,y){
       console.log(x,y)
+      if(this.isAuto){ this.autoPlayer1(y) }
       this.autoPlayer2(y)
     },
     autoPlayer1(ballY){
