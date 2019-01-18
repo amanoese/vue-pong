@@ -14,8 +14,9 @@ export default new Router({
       component: Login
     },
     {
-      path: '/game',
+      path: '/game/:playerId',
       name: 'game',
+      props: true,
       component: () => import('./views/Game.vue')
     },
     {

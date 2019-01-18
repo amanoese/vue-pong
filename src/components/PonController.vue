@@ -11,12 +11,14 @@
 
 <script>
 import PonCanvas from '@/components/PonCanvas.vue'
+import { createNamespacedHelpers } from 'vuex'
+const { mapState } = createNamespacedHelpers('user')
 
 export default {
   components: {
     PonCanvas
   },
-  props : { isAuto:Boolean },
+  props : { isAuto:Boolean, isPlayer1:Boolean },
   data(){
     return {
       player1Y : 100,
@@ -27,7 +29,14 @@ export default {
   methods : {
     mousemove(event) {
       if(this.isAuto){ return }
-      this.player1Y = event.offsetY
+      this.moveRacket(event.offsetY)
+    },
+    moveRacket(y){
+      if(this.isPlayer1) {
+        this.player1Y = y
+        return
+      }
+      this.player2Y = y
     },
     moveball(x,y){
       console.log(x,y)

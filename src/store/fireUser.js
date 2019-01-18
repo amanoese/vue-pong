@@ -40,7 +40,7 @@ export default {
       let doc = await state.playUserCollection.doc(uid).get()
       if(!doc.exists){
         console.log(`${uid} is not found`)
-        state.playUserCollection.doc(uid).set({name,photoURL,matchup})
+        state.playUserCollection.doc(uid).set({uid,name,photoURL,matchup})
       }
     },
     logoutUser({ commit }){

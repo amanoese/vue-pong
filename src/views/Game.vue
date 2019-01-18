@@ -1,6 +1,6 @@
 <template>
   <div id="game">
-    <PonController :isAuto="isAuto"></PonController>
+    <PonController :isAuto="isAuto" :isPlayer1="isPlayer1"></PonController>
     <vs-row vs-justify="center" vs-align="center" class="mt-2">
       <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="4">
         <label for="">Player1 Auto </label>
@@ -16,13 +16,17 @@ import PonController from '@/components/PonController.vue'
 
 export default {
   name: 'game',
+  props : { playerId: String },
   data(){
     return {
       isAuto: false
     }
   },
   computed : {
-    ...mapState(['photoUrl'])
+    isPlayer1(){
+      return this.playerId === this.user.uid || this.playerId === 'computer'
+    },
+    ...mapState(['photoUrl','user'])
   },
   components: {
     PonController
