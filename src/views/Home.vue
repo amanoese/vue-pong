@@ -27,7 +27,9 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { createNamespacedHelpers } from 'vuex'
+const { mapState } = createNamespacedHelpers('user')
+
 export default {
   name : 'home',
   computed : {

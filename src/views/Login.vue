@@ -20,8 +20,9 @@
 </template>
 
 <script>
-import { mapState,mapActions } from 'vuex'
 import firebase from 'firebase'
+import { createNamespacedHelpers } from 'vuex'
+const { mapState, mapActions } = createNamespacedHelpers('user')
 
 export default {
   name: 'login',

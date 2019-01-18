@@ -4,8 +4,9 @@
   </div>
 </template>
 <script>
-import { mapActions } from 'vuex'
 import firebase from 'firebase'
+import { createNamespacedHelpers } from 'vuex'
+const { mapActions } = createNamespacedHelpers('user')
 
 export default {
   name: 'App',
