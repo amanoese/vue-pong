@@ -3,7 +3,7 @@
     <PonController :isAuto="isAuto" :isPlayer1="isPlayer1"></PonController>
     <vs-row vs-justify="center" vs-align="center" class="mt-2">
       <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="4">
-        <label for="">Player1 Auto </label>
+        <label for="">Player Auto</label>
         <vs-switch v-model="isAuto"/>
       </vs-col>
     </vs-row>
@@ -11,8 +11,10 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import PonController from '@/components/PonController.vue'
+import { createNamespacedHelpers } from 'vuex'
+const { mapState:mapStateUser } = createNamespacedHelpers('user')
+const { mapActions:mapActionsGame } = createNamespacedHelpers('game')
 
 export default {
   name: 'game',
@@ -23,10 +25,20 @@ export default {
     }
   },
   computed : {
+    ...mapStateUser(['photoUrl','user']),
     isPlayer1(){
-      return this.playerId === this.user.uid || this.playerId === 'computer'
+      console.log('user',this.user)
+      return  this.playerId === 'computer' || this.user && this.playerId === this.user.uid
     },
-    ...mapState(['photoUrl','user'])
+  },
+  watch : {
+    user(){
+      console.log('initGame user',this.user)
+      this.initGame({user:this.user,ballId:this.playerId})
+    }
+  },
+  methods : {
+    ...mapActionsGame(['initGame'])
   },
   components: {
     PonController

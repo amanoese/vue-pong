@@ -2,8 +2,8 @@
   <div>
     <PonCanvas
       :isAuto="isAuto"
-      :player1Y="player1Y"
-      :player2Y="player2Y"
+      :player1Y="c_player1Y"
+      :player2Y="c_player2Y"
       @mousemove.native="mousemove($event)"
       @moveball="moveball"></PonCanvas>
   </div>
@@ -12,7 +12,7 @@
 <script>
 import PonCanvas from '@/components/PonCanvas.vue'
 import { createNamespacedHelpers } from 'vuex'
-const { mapState } = createNamespacedHelpers('user')
+const { mapState, mapActions } = createNamespacedHelpers('game')
 
 export default {
   components: {
@@ -26,7 +26,20 @@ export default {
       play : false
     }
   },
+  computed : {
+    c_player1Y(){
+      return this.isPlayer1 ? this.player1Y : this.firePlayer1.y
+    },
+    c_player2Y(){
+      return !this.isPlayer1 ? this.player2Y : this.firePlayer2.y
+    },
+    ...mapState({
+      firePlayer1: 'player1',
+      firePlayer2: 'player2',
+    }),
+  },
   methods : {
+    ...mapActions(['setBallRef', 'updatePlayer1', 'updatePlayer2']),
     mousemove(event) {
       if(this.isAuto){ return }
       this.moveRacket(event.offsetY)
@@ -34,14 +47,15 @@ export default {
     moveRacket(y){
       if(this.isPlayer1) {
         this.player1Y = y
+        this.updatePlayer1({y})
         return
       }
       this.player2Y = y
+      this.updatePlayer2({y})
     },
     moveball(x,y){
-      console.log(x,y)
-      if(this.isAuto){ this.autoPlayer1(y) }
-      this.autoPlayer2(y)
+      if(this.isAuto &&  this.isPlayer1){ this.autoPlayer1(y) }
+      if(this.isAuto && !this.isPlayer1){ this.autoPlayer2(y) }
     },
     autoPlayer1(ballY){
       this.player1Y += (ballY - this.player1Y > 0 ? 4.5 : -4.5)

@@ -6,14 +6,12 @@ export default {
   namespaced: true,
   state : {
     ballId : '',
-    player1Id : '',
-    player2Id : '',
     ball : {
       ballX : -1,
       ballY : -1,
       accelerationX: -5,
-      accelerationY: -5
-      ballSize : 10,
+      accelerationY: -5,
+      ballSize : 10
     },
     player1 : {
       uid: '',
@@ -32,22 +30,27 @@ export default {
     }
   },
   actions : {
-    initGame({commit,dispatch},{user),ballId=undifind}){
-      let { uid, photoURL} = user
-      let _ballId = db.collection('Ball').doc(ballId)
+    initGame({commit,dispatch},{user,ballId=undifind}){
+      console.log('initGame')
+      let ball = db.collection('Ball').doc(ballId)
+      let id = ball.id
 
-      let player1 = db.collection('Player1').doc(_ballId)
-      let player2 = db.collection('Player2').doc(_ballId)
+      let player1 = db.collection('Player1').doc(id)
+      let player2 = db.collection('Player2').doc(id)
 
-      dispatch('setBallId',ballId)
+      commit('setBallId',id)
+      dispatch('setBallRef',ball)
       dispatch('setPlayer1',player1)
       dispatch('setPlayer2',player2)
     },
-    async updatePlayer1({state},user){
-      await db.collection('Player1').doc(state.ballId).set({...state.user,...user})
+    updateBall({state},ball){
+      db.collection('Ball').doc(state.ballId).set({...state.ball,...ball})
     },
-    async updatePlayer2({state},user){
-      await db.collection('Player2').doc(state.ballId).set({...state.user,...user})
+    updatePlayer1({state},user){
+      db.collection('Player1').doc(state.ballId).set({...state.user,...user})
+    },
+    updatePlayer2({state},user){
+      db.collection('Player2').doc(state.ballId).set({...state.user,...user})
     },
     setBallRef: firebaseAction(({ bindFirebaseRef }, ref) => {
       bindFirebaseRef('ball', ref)
