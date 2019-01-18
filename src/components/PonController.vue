@@ -1,9 +1,9 @@
 <template>
   <div>
     <PonCanvas
-      :isAuto="isAuto"
-      :player1Y="c_player1Y"
-      :player2Y="c_player2Y"
+      :player1Y="c_player1Y()"
+      :player2Y="c_player2Y()"
+      :isPlayer1="isPlayer1"
       @mousemove.native="mousemove($event)"
       @moveball="moveball"></PonCanvas>
   </div>
@@ -27,12 +27,6 @@ export default {
     }
   },
   computed : {
-    c_player1Y(){
-      return this.isPlayer1 ? this.player1Y : this.firePlayer1.y
-    },
-    c_player2Y(){
-      return !this.isPlayer1 ? this.player2Y : this.firePlayer2.y
-    },
     ...mapState({
       firePlayer1: 'player1',
       firePlayer2: 'player2',
@@ -40,6 +34,12 @@ export default {
   },
   methods : {
     ...mapActions(['setBallRef', 'updatePlayer1', 'updatePlayer2']),
+    c_player1Y(){
+      return this.isPlayer1 ? this.player1Y : this.firePlayer1.y
+    },
+    c_player2Y(){
+      return !this.isPlayer1 ? this.player2Y : this.firePlayer2.y
+    },
     mousemove(event) {
       if(this.isAuto){ return }
       this.moveRacket(event.offsetY)

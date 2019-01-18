@@ -11,22 +11,24 @@
   <SvgBox :x="player2X" :y="player2Y" :width="racketWidth" :height="racketHeight"></SvgBox>
 
   <SvgBox v-if="play" :x="ballX" :y="ballY" :width="ballSize" :height="ballSize"></SvgBox>
-  <SvgBox v-if="play" :x="nBallX" :y="nBallY" :width="ballSize" :height="ballSize" color="rgba(255,255,255,0.5)"></SvgBox>
+  <!--<SvgBox v-if="play" :x="nBallX" :y="nBallY" :width="ballSize" :height="ballSize" color="rgba(255,255,255,0.5)"></SvgBox>-->
   <rect x="0" y="0" width="720" height="480" stroke-width="0" fill="rgba(0,0,0,0)"
-    @keyup="keyup"
     @click="gameClick" />
 </svg>
 </template>
 
 <script>
 import SvgBox from './SvgBox.vue'
+import { createNamespacedHelpers } from 'vuex'
+const { mapState, mapActions } = createNamespacedHelpers('game')
 
 export default {
   name: 'pon-canvas',
   components: { SvgBox },
   props: {
+    isPlayer1:Boolean,
     player1Y : { type:Number, default : 100 },
-    player2Y : { type:Number, default : 100 }
+    player2Y : { type:Number, default : 100 },
   },
   data() {
     return {
@@ -49,12 +51,20 @@ export default {
       accelerationX: -5,
       accelerationY: -5,
 
-      nBallX : -1,
-      nBallY : -1,
+      //nBallX : -1,
+      //nBallY : -1,
 
     }
   },
   computed: {
+    ...mapState(['ball']),
+    isMyBall(){
+      return (
+        this.isPlayer1 &&
+          (  (this.ballX < this.tableWidth*3/4 && this.accelerationX < 0)
+          || (this.ballX < this.tableWidth*1/4 && 0 < this.accelerationX))
+        )
+    },
     tableHeightHerf (){
       return this.tableHeight / 2
     },
@@ -66,11 +76,22 @@ export default {
     }
   },
   watch: {
+    ball({ ballX, ballY, accelerationX, accelerationY, ballSize, play}){
+      if(!this.play || this.isMyBall && ballX){ return }
+      console.log('ball for Firebase')
+      this.play = play
+      this.ballX         = ballX
+      this.ballY         = ballY
+      this.accelerationX = accelerationX
+      this.accelerationY = accelerationY
+      this.ballSize      = ballSize
+    },
     play(){
       this.gameInterval()
     }
   },
   methods : {
+    ...mapActions(['updateBall']),
     gameClick(){
       if(this.play){
         this.gameStop()
@@ -83,9 +104,11 @@ export default {
       this.ballY = Math.random() * this.tableHeight
       this.ballX = this.tableWidthHerf
       this.accelerationY *= (Math.random() > 0.5) ? 1 : -1
+      this.syncBall()
     },
     gameStop(){
       this.play = false
+      this.syncBall()
       //clearTimeout(this.timerId)
     },
     gameInterval(){
@@ -94,14 +117,11 @@ export default {
       this.moveBall()
       this.boundBall()
       let [x,y] = this.nSeccondAfterBall(20)
-      this.nBallX = x
-      this.nBallY = y
+      //this.nBallX = x
+      //this.nBallY = y
       this.isGaol()
 
       this.timerId = setTimeout(()=>this.gameInterval(),25)
-    },
-    keyup(){
-      //console.log('keyup!')
     },
     ballPos: function ballPos(t,ballX,ballY,accelerationX,accelerationY,tableHeight){
       return t <= 0 ? [ballX,ballY] :
@@ -122,6 +142,20 @@ export default {
       this.ballX += this.accelerationX
       this.ballY += this.accelerationY
       this.$emit('moveball',this.ballX,this.ballY)
+
+      if(this.isMyBall){
+        this.syncBall()
+      }
+    },
+    syncBall(){
+      this.updateBall({
+        play          : this.play,
+        ballX         : this.ballX,
+        ballY         : this.ballY,
+        accelerationX : this.accelerationX,
+        accelerationY : this.accelerationY,
+        ballSize      : this.ballSize,
+      })
     },
     hitBox([x,y,w,h],[x_2,y_2,w_2,h_2]){
       return Math.abs(x - x_2) < w/2 + w_2/2
