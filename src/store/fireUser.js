@@ -7,28 +7,41 @@ export default {
     user : null,
     name : '',
     photoURL : '',
-    playUser : []
+    playUser : [],
+    playUserCollection : null
+  },
+  getters : {
+    playUser: state => [{ name: 'computer', uid: 'computer', matchup: true },...state.playUser]
   },
   mutations: {
-    saveUser(store,user){
-      store.user = user
+    saveUser(state,user){
+      state.user = user
       let {displayName:name, photoURL} = user
-      store.name = name
-      store.photoURL = user.photoURL
+      state.name = name
+      state.photoURL = user.photoURL
     },
-    clearUser(store){
-      store.user = null
+    clearUser(state){
+      state.user = null
+    },
+    bindPlayUserCollection(state,collection){
+      state.playUserCollection = collection
     },
     ...firebaseMutations
   },
   actions: {
-    loginUser({ state, commit, dispatch },user){
-      let {name="",photoURL="",uid=""} = user
+    async loginUser ({ state, commit, dispatch },user){
+      let {name="",photoURL="",uid="",matchup=false} = user
 
       commit('saveUser',user)
       let collection = db.collection('playUser')
-      dispatch('setAllUsersRef',collection)
-      collection.add({name,photoURL,uid})
+      await dispatch('setAllUsersRef',collection)
+      commit('bindPlayUserCollection',collection)
+
+      let doc = await state.playUserCollection.doc(uid).get()
+      if(!doc.exists){
+        console.log(`${uid} is not found`)
+        state.playUserCollection.doc(uid).set({name,photoURL,matchup})
+      }
     },
     logoutUser({ commit }){
       commit('clearUser')

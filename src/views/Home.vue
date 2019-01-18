@@ -16,7 +16,8 @@
         <b-list-group-item href="/game">
           <b-row>
             <b-col class="text-right">
-              <b-img thumbnail :src="user.photoURL" alt="photo image" width="50" height="50"/>
+              <b-img v-if="user.photoURL" thumbnail :src="user.photoURL" alt="photo image" width="50" height="50"/>
+              <font-awesome-icon v-else :icon="['fas','robot']" class="m-1"/>
             </b-col>
             <b-col class="text-left"> {{user.name}} </b-col>
           </b-row>
@@ -28,12 +29,13 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex'
-const { mapState } = createNamespacedHelpers('user')
+const { mapState, mapGetters } = createNamespacedHelpers('user')
 
 export default {
   name : 'home',
   computed : {
-    ...mapState(['photoURL','playUser'])
+    ...mapState(['photoURL']),
+    ...mapGetters(['playUser'])
   },
 }
 </script>
