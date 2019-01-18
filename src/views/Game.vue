@@ -1,6 +1,6 @@
 <template>
   <div id="game">
-    <PonCanvas :isAuto="isAuto"></PonCanvas>
+    <PonController :isAuto="isAuto"></PonController>
     <vs-row vs-justify="center" vs-align="center" class="mt-2">
       <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="4">
         <label for="">Player1 Auto </label>
@@ -12,7 +12,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import PonCanvas from '@/components/PonCanvas.vue'
+import PonController from '@/components/PonController.vue'
 
 export default {
   name: 'game',
@@ -25,7 +25,7 @@ export default {
     ...mapState(['photoUrl'])
   },
   components: {
-    PonCanvas
+    PonController
   }
 }
 </script>

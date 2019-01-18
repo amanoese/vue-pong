@@ -15,7 +15,7 @@
   <rect x="0" y="0" width="720" height="480" stroke-width="0" fill="rgba(0,0,0,0)"
     @keyup="keyup"
     @click="gameClick"
-    @mousemove="mousemove($event)" />
+     />
 </svg>
 </template>
 
@@ -25,8 +25,11 @@ import SvgBox from './SvgBox.vue'
 export default {
   name: 'pon-canvas',
   components: { SvgBox },
-  props:{
-    isAuto: { type: Boolean, default : false }
+  props: {
+    isAuto: { type: Boolean, default : false },
+
+    player1Y : { type:Number, default : 100 },
+    player2Y : { type:Number, default : 100 }
   },
   data() {
     return {
@@ -35,23 +38,23 @@ export default {
       tableHeight: 480,
       tableWidth: 720,
 
-      player1X : 50,
-      player2X : 680,
-      player1Y : 100,
-      player2Y : 100,
-
       player1Point: 0,
       player2Point: 0,
-      play : false,
       timerId: NaN,
 
+      player1X : 50,
+      player2X : 680,
+
+      play : false,
+      ballSize : 10,
       ballX : -1,
       ballY : -1,
+      accelerationX: -5,
+      accelerationY: -5,
+
       nBallX : -1,
       nBallY : -1,
-      ballSize : 10,
-      accelerationX: -5,
-      accelerationY: -5
+
     }
   },
   computed: {
@@ -93,7 +96,6 @@ export default {
 
       this.moveBall()
       if(this.isAuto) { this.autoPlayer1() }
-      this.autoPlayer2()
       this.boundBall()
       let [x,y] = this.nSeccondAfterBall(20)
       this.nBallX = x
@@ -105,10 +107,6 @@ export default {
       }
 
       this.timerId = setTimeout(()=>this.gameInterval(),25)
-    },
-    mousemove(event) {
-      if(this.isAuto){ return }
-      this.player1Y = event.offsetY
     },
     keyup(){
       //console.log('keyup!')
@@ -131,6 +129,7 @@ export default {
     moveBall(){
       this.ballX += this.accelerationX
       this.ballY += this.accelerationY
+      this.$emit('moveball',this.ballX,this.ballY)
     },
     hitBox([x,y,w,h],[x_2,y_2,w_2,h_2]){
       return Math.abs(x - x_2) < w/2 + w_2/2
@@ -149,12 +148,6 @@ export default {
       if(this.tableWidthHerf > Math.abs(this.ballX - this.tableWidthHerf)) { return }
       this.play = false
       this.ballX > 0 ? this.player1Point += 1 : this.player2Point += 1
-    },
-    autoPlayer1(){
-      this.player1Y += (this.ballY - this.player1Y > 0 ? 4.5 : -4.5)
-    },
-    autoPlayer2(){
-      this.player2Y += (this.ballY - this.player2Y > 0 ? 4.5 : -4.5)
     }
   }
 }
